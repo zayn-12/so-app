@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Stock Opname Tim</title>
+    <title>SO Online Kategori - Pak Udin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -12,90 +12,92 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
+        .category-block { margin-bottom: 3rem; } /* Jeda antar kategori */
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 2s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
+<body class="bg-gray-100 p-4">
 
-    <div class="container mx-auto p-4 max-w-6xl">
-        
+    <div class="max-w-7xl mx-auto">
         <div id="connectionStatus" class="bg-yellow-500 text-white text-center text-sm py-1 mb-4 rounded shadow">
-            Sedang menghubungkan ke Database...
+            Menghubungkan ke Database...
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             
-            <div class="bg-white p-6 rounded-xl shadow-md h-fit lg:col-span-1">
-                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Form Input</h2>
+            <div class="bg-white p-5 rounded-xl shadow-md h-fit lg:col-span-1 border-t-4 border-blue-600 sticky top-4">
+                <h2 class="text-lg font-bold mb-4 text-blue-600 uppercase tracking-wider">Input Stok</h2>
                 <form id="stockForm">
-                    <input type="hidden" id="dataId"> <div class="mb-3">
-                        <label class="block text-sm text-gray-700">PLU</label>
-                        <input type="text" id="plu" class="w-full mt-1 p-2 border rounded" required>
-                    </div>
+                    <input type="hidden" id="dataId">
+
                     <div class="mb-3">
-                        <label class="block text-sm text-gray-700">Barcode</label>
-                        <input type="text" id="barcode" class="w-full mt-1 p-2 border rounded">
-                    </div>
-                    <div class="mb-3">
-                        <label class="block text-sm text-gray-700">Nama Barang</label>
-                        <input type="text" id="namaBarang" class="w-full mt-1 p-2 border rounded" required>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mb-3">
-                        <div>
-                            <label class="block text-sm text-gray-700">Gudang</label>
-                            <input type="number" id="qtyGudang" class="w-full mt-1 p-2 border rounded bg-blue-50" value="0">
-                        </div>
-                        <div>
-                            <label class="block text-sm text-gray-700">Toko</label>
-                            <input type="number" id="qtyToko" class="w-full mt-1 p-2 border rounded bg-green-50" value="0">
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold">Total</label>
-                        <input type="number" id="qtyTotal" class="w-full mt-1 p-2 bg-gray-200 font-bold text-center rounded" value="0" readonly>
+                        <label class="block text-xs font-bold text-gray-500 uppercase">Kategori</label>
+                        <select id="kategori" class="w-full mt-1 p-2 border rounded bg-yellow-50 font-semibold outline-none focus:ring-2 focus:ring-yellow-400" required>
+                            <option value="">-- Pilih Kategori --</option>
+                            <option value="MBF">MBF</option>
+                            <option value="PCE">PCE</option>
+                            <option value="ROKOK">ROKOK</option>
+                            <option value="BFD">BFD</option>
+                            <option value="IFD">IFD</option>
+                            <option value="OTHERS">OTHERS</option>
+                        </select>
                     </div>
 
-                    <div class="flex gap-2">
-                        <button type="submit" id="btnSave" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Simpan</button>
-                        <button type="button" id="btnCancel" onclick="resetForm()" class="hidden w-1/3 bg-gray-400 text-white py-2 rounded hover:bg-gray-500">Batal</button>
+                    <div class="mb-3">
+                        <label class="block text-xs font-bold text-gray-500 uppercase">PLU</label>
+                        <input type="text" id="plu" class="w-full mt-1 p-2 border rounded" placeholder="Contoh: 12345" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="block text-xs font-bold text-gray-500 uppercase">Nama Barang</label>
+                        <input type="text" id="namaBarang" class="w-full mt-1 p-2 border rounded" placeholder="Nama produk..." required>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2 mb-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-blue-600">GUDANG</label>
+                            <input type="number" id="qtyGudang" class="w-full p-2 border rounded bg-blue-50 text-center" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-green-600">TOKO</label>
+                            <input type="number" id="qtyToko" class="w-full p-2 border rounded bg-green-50 text-center" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-red-600">LPPTK</label>
+                            <input type="number" id="qtyLpptk" class="w-full p-2 border rounded bg-red-50 text-center" value="0">
+                        </div>
+                    </div>
+
+                    <div class="mb-4 bg-gray-800 p-3 rounded-lg text-center">
+                        <label class="block text-xs font-bold text-gray-400 uppercase">Total Akhir</label>
+                        <input type="number" id="qtyTotal" class="w-full bg-transparent text-white font-bold text-2xl text-center outline-none" value="0" readonly>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <button type="submit" id="btnSave" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 shadow-lg transition-all">SIMPAN DATA</button>
+                        <button type="button" id="btnCancel" onclick="resetForm()" class="hidden w-full bg-gray-400 text-white py-2 rounded-lg">BATAL / RESET</button>
                     </div>
                 </form>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow-md lg:col-span-2 flex flex-col h-full">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">Data Stok Tim</h2>
-                    <button onclick="exportToExcel()" class="bg-green-600 text-white text-sm py-2 px-4 rounded hover:bg-green-700">
-                        <i class="fas fa-file-excel mr-1"></i> Excel
+            <div class="lg:col-span-3">
+                <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm">
+                    <h2 class="text-xl font-black text-gray-800"><i class="fas fa-boxes mr-2 text-blue-600"></i>MONITORING STOK TIM</h2>
+                    <button onclick="exportToExcel()" class="bg-green-600 text-white text-sm font-bold py-2 px-6 rounded-full hover:bg-green-700 transition shadow-md">
+                        <i class="fas fa-file-excel mr-2"></i>DOWNLOAD SEMUA DATA (EXCEL)
                     </button>
                 </div>
+
+                <div id="loading" class="flex justify-center p-10"><div class="loader"></div></div>
                 
-                <div class="overflow-x-auto flex-grow">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-100 text-sm uppercase">
-                                <th class="p-3">PLU/Barcode</th>
-                                <th class="p-3">Nama</th>
-                                <th class="p-3 text-center">Gudang</th>
-                                <th class="p-3 text-center">Toko</th>
-                                <th class="p-3 text-center">Total</th>
-                                <th class="p-3 text-center">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTable" class="text-sm">
-                            </tbody>
-                    </table>
-                    <div id="loading" class="flex justify-center p-4"><div class="loader"></div></div>
-                </div>
+                <div id="categoryContainer"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // 1. TEMPEL KODE FIREBASE CONFIG DI SINI !!
-        // ==========================================
+        // --- MASUKKAN CONFIG FIREBASE PAK UDIN ---
         const firebaseConfig = {
             apiKey: "AIzaSyBzOXWAgJIPA9m8aqzXWhYHVXZZ5EooPAw",
             authDomain: "so-udin.firebaseapp.com",
@@ -106,13 +108,154 @@
             appId: "1:786787556541:web:a3516cbe46db918f436bd4"
    
         };
-        // ==========================================
 
-        // Inisialisasi Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        let allItems = [];
+
+        // Hitung Otomatis
+        function hitung() {
+            const g = parseInt(document.getElementById('qtyGudang').value) || 0;
+            const t = parseInt(document.getElementById('qtyToko').value) || 0;
+            const l = parseInt(document.getElementById('qtyLpptk').value) || 0;
+            document.getElementById('qtyTotal').value = (g + t) - l;
+        }
+        ['qtyGudang', 'qtyToko', 'qtyLpptk'].forEach(id => document.getElementById(id).addEventListener('input', hitung));
+
+        // --- RENDER DATA DENGAN PENGELOMPOKAN ---
+        db.ref('stok_opname').on('value', (snapshot) => {
+            document.getElementById('loading').style.display = 'none';
+            const container = document.getElementById('categoryContainer');
+            container.innerHTML = '';
+            allItems = [];
+
+            const data = snapshot.val();
+            if (!data) {
+                container.innerHTML = `<div class="bg-white p-10 rounded-xl text-center text-gray-400 shadow">Belum ada data stok yang diinput.</div>`;
+                return;
+            }
+
+            // 1. Kelompokkan data berdasarkan Kategori
+            const grouped = {};
+            Object.keys(data).forEach(key => {
+                const item = { id: key, ...data[key] };
+                allItems.push(item);
+                if (!grouped[item.kategori]) grouped[item.kategori] = [];
+                grouped[item.kategori].push(item);
+            });
+
+            // 2. Buat Tabel untuk setiap Kategori
+            Object.keys(grouped).sort().forEach(kat => {
+                const section = document.createElement('div');
+                section.className = 'category-block bg-white rounded-xl shadow-md overflow-hidden animate__animated animate__fadeIn';
+                
+                let rows = '';
+                grouped[kat].forEach(i => {
+                    rows += `
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-3 font-bold text-gray-700">${i.plu}</td>
+                            <td class="p-3 font-medium text-gray-600">${i.nama}</td>
+                            <td class="p-3 text-center text-blue-600 font-bold">${i.gudang}</td>
+                            <td class="p-3 text-center text-green-600 font-bold">${i.toko}</td>
+                            <td class="p-3 text-center text-red-500">-${i.lpptk}</td>
+                            <td class="p-3 text-center bg-gray-50 font-black text-lg">${i.total}</td>
+                            <td class="p-3 text-center">
+                                <button onclick="editData('${i.id}')" class="text-blue-500 hover:text-blue-700 p-2"><i class="fas fa-edit"></i></button>
+                                <button onclick="hapusData('${i.id}')" class="text-red-400 hover:text-red-600 p-2"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                });
+
+                section.innerHTML = `
+                    <div class="bg-gradient-to-r from-gray-700 to-gray-900 text-white p-3 px-5 flex justify-between items-center">
+                        <span class="font-black tracking-widest"><i class="fas fa-tag mr-2 text-yellow-400"></i> ${kat}</span>
+                        <span class="text-xs bg-white/20 px-3 py-1 rounded-full">${grouped[kat].length} Item</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 text-gray-500 text-[10px] uppercase tracking-tighter">
+                                <tr>
+                                    <th class="p-3">PLU</th>
+                                    <th class="p-3">NAMA PRODUK</th>
+                                    <th class="p-3 text-center">GUDANG</th>
+                                    <th class="p-3 text-center">TOKO</th>
+                                    <th class="p-3 text-center">LPPTK</th>
+                                    <th class="p-3 text-center">TOTAL</th>
+                                    <th class="p-3 text-center">AKSI</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                `;
+                container.appendChild(section);
+            });
+        });
+
+        // Simpan
+        document.getElementById('stockForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('dataId').value;
+            const payload = {
+                kategori: document.getElementById('kategori').value,
+                plu: document.getElementById('plu').value,
+                nama: document.getElementById('namaBarang').value,
+                gudang: parseInt(document.getElementById('qtyGudang').value) || 0,
+                toko: parseInt(document.getElementById('qtyToko').value) || 0,
+                lpptk: parseInt(document.getElementById('qtyLpptk').value) || 0,
+                total: parseInt(document.getElementById('qtyTotal').value) || 0
+            };
+            if (id) db.ref('stok_opname/' + id).update(payload);
+            else db.ref('stok_opname').push(payload);
+            resetForm();
+        });
+
+        window.editData = (id) => {
+            const item = allItems.find(d => d.id === id);
+            document.getElementById('dataId').value = id;
+            document.getElementById('kategori').value = item.kategori;
+            document.getElementById('plu').value = item.plu;
+            document.getElementById('namaBarang').value = item.nama;
+            document.getElementById('qtyGudang').value = item.gudang;
+            document.getElementById('qtyToko').value = item.toko;
+            document.getElementById('qtyLpptk').value = item.lpptk;
+            document.getElementById('qtyTotal').value = item.total;
+            document.getElementById('btnSave').innerText = "UPDATE DATA";
+            document.getElementById('btnCancel').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.hapusData = (id) => { if(confirm("Hapus barang ini?")) db.ref('stok_opname/' + id).remove(); };
+
+        window.resetForm = () => {
+            document.getElementById('stockForm').reset();
+            document.getElementById('dataId').value = '';
+            document.getElementById('qtyTotal').value = 0;
+            document.getElementById('btnSave').innerText = "SIMPAN DATA";
+            document.getElementById('btnCancel').classList.add('hidden');
+        };
+
+        window.exportToExcel = () => {
+            if (allItems.length === 0) return alert("Tidak ada data.");
+            // Urutkan berdasarkan kategori agar di excel rapi
+            const sorted = allItems.sort((a, b) => a.kategori.localeCompare(b.kategori));
+            const cleanData = sorted.map(i => ({ 
+                Kategori: i.kategori, PLU: i.plu, Nama: i.nama, 
+                Gudang: i.gudang, Toko: i.toko, LPPTK: i.lpptk, Total: i.total 
+            }));
+            const ws = XLSX.utils.json_to_sheet(cleanData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Stok Opname");
+            XLSX.writeFile(wb, "SO_Team_Udin.xlsx");
+        };
+
+        db.ref(".info/connected").on("value", (snap) => {
+            document.getElementById("connectionStatus").style.display = snap.val() ? "none" : "block";
+        });
+    </script>
+</body>
+</html>
+8        const db = firebase.database();
         
         // Cek Koneksi
         const connectedRef = db.ref(".info/connected");
