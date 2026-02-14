@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Stock Opname Tim</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <div class="container mx-auto p-4 max-w-6xl">
+        
+        <div id="connectionStatus" class="bg-yellow-500 text-white text-center text-sm py-1 mb-4 rounded shadow">
+            Sedang menghubungkan ke Database...
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-white p-6 rounded-xl shadow-md h-fit lg:col-span-1">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">Form Input</h2>
+                <form id="stockForm">
+                    <input type="hidden" id="dataId"> <div class="mb-3">
+                        <label class="block text-sm text-gray-700">PLU</label>
+                        <input type="text" id="plu" class="w-full mt-1 p-2 border rounded" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm text-gray-700">Barcode</label>
+                        <input type="text" id="barcode" class="w-full mt-1 p-2 border rounded">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm text-gray-700">Nama Barang</label>
+                        <input type="text" id="namaBarang" class="w-full mt-1 p-2 border rounded" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div>
+                            <label class="block text-sm text-gray-700">Gudang</label>
+                            <input type="number" id="qtyGudang" class="w-full mt-1 p-2 border rounded bg-blue-50" value="0">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-700">Toko</label>
+                            <input type="number" id="qtyToko" class="w-full mt-1 p-2 border rounded bg-green-50" value="0">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold">Total</label>
+                        <input type="number" id="qtyTotal" class="w-full mt-1 p-2 bg-gray-200 font-bold text-center rounded" value="0" readonly>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button type="submit" id="btnSave" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">Simpan</button>
+                        <button type="button" id="btnCancel" onclick="resetForm()" class="hidden w-1/3 bg-gray-400 text-white py-2 rounded hover:bg-gray-500">Batal</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md lg:col-span-2 flex flex-col h-full">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold">Data Stok Tim</h2>
+                    <button onclick="exportToExcel()" class="bg-green-600 text-white text-sm py-2 px-4 rounded hover:bg-green-700">
+                        <i class="fas fa-file-excel mr-1"></i> Excel
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto flex-grow">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-sm uppercase">
+                                <th class="p-3">PLU/Barcode</th>
+                                <th class="p-3">Nama</th>
+                                <th class="p-3 text-center">Gudang</th>
+                                <th class="p-3 text-center">Toko</th>
+                                <th class="p-3 text-center">Total</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTable" class="text-sm">
+                            </tbody>
+                    </table>
+                    <div id="loading" class="flex justify-center p-4"><div class="loader"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. TEMPEL KODE FIREBASE CONFIG DI SINI !!
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzOXWAgJIPA9m8aqzXWhYHVXZZ5EooPAw",
+            authDomain: "so-udin.firebaseapp.com",
+            databaseURL: "https://so-udin-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "so-udin",
+            storageBucket: "so-udin.firebasestorage.app",
+            messagingSenderId: "786787556541",
+            appId: "1:786787556541:web:a3516cbe46db918f436bd4"
+   
+        };
+        // ==========================================
+
+        // Inisialisasi Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+        
+        // Cek Koneksi
+        const connectedRef = db.ref(".info/connected");
+        connectedRef.on("value", (snap) => {
+            const statusDiv = document.getElementById("connectionStatus");
+            if (snap.val() === true) {
+                statusDiv.innerText = "✅ Terhubung ke Server";
+                statusDiv.className = "bg-green-500 text-white text-center text-sm py-1 mb-4 rounded shadow transition-all";
+                setTimeout(() => { statusDiv.style.display = 'none'; }, 3000);
+            } else {
+                statusDiv.innerText = "⏳ Putus koneksi / Sedang menghubungkan...";
+                statusDiv.className = "bg-red-500 text-white text-center text-sm py-1 mb-4 rounded shadow";
+                statusDiv.style.display = 'block';
+            }
+        });
+
+        // Variabel Lokal
+        let localData = [];
+        const form = document.getElementById('stockForm');
+        
+        // Hitung Otomatis
+        function hitung() {
+            const g = parseInt(document.getElementById('qtyGudang').value) || 0;
+            const t = parseInt(document.getElementById('qtyToko').value) || 0;
+            document.getElementById('qtyTotal').value = g + t;
+        }
+        document.getElementById('qtyGudang').addEventListener('input', hitung);
+        document.getElementById('qtyToko').addEventListener('input', hitung);
+
+        // --- BACA DATA (REALTIME) ---
+        db.ref('stok_opname').on('value', (snapshot) => {
+            const tbody = document.getElementById('dataTable');
+            const loading = document.getElementById('loading');
+            tbody.innerHTML = '';
+            localData = []; // Reset data lokal
+
+            const data = snapshot.val();
+            
+            if (data) {
+                // Ubah object Firebase menjadi Array
+                Object.keys(data).forEach(key => {
+                    localData.push({ id: key, ...data[key] });
+                });
+
+                // Render ke Tabel
+                localData.forEach(item => {
+                    const row = `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3">
+                                <div class="font-bold">${item.plu}</div>
+                                <div class="text-xs text-gray-400">${item.barcode}</div>
+                            </td>
+                            <td class="p-3">${item.nama}</td>
+                            <td class="p-3 text-center bg-blue-50 text-blue-700 font-bold">${item.gudang}</td>
+                            <td class="p-3 text-center bg-green-50 text-green-700 font-bold">${item.toko}</td>
+                            <td class="p-3 text-center font-bold text-lg">${item.total}</td>
+                            <td class="p-3 text-center">
+                                <button onclick="editData('${item.id}')" class="text-yellow-600 hover:text-yellow-800 mr-2"><i class="fas fa-pencil-alt"></i></button>
+                                <button onclick="hapusData('${item.id}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-gray-400">Belum ada data</td></tr>';
+            }
+            loading.style.display = 'none';
+        });
+
+        // --- SIMPAN DATA (TAMBAH / EDIT) ---
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('dataId').value;
+            const newData = {
+                plu: document.getElementById('plu').value,
+                barcode: document.getElementById('barcode').value,
+                nama: document.getElementById('namaBarang').value,
+                gudang: parseInt(document.getElementById('qtyGudang').value) || 0,
+                toko: parseInt(document.getElementById('qtyToko').value) || 0,
+                total: parseInt(document.getElementById('qtyTotal').value) || 0
+            };
+
+            if (!id) {
+                // Tambah Baru
+                db.ref('stok_opname').push(newData);
+            } else {
+                // Update
+                db.ref('stok_opname/' + id).update(newData);
+            }
+            resetForm();
+        });
+
+        // --- EDIT ---
+        window.editData = function(id) {
+            const item = localData.find(d => d.id === id);
+            if (item) {
+                document.getElementById('dataId').value = id;
+                document.getElementById('plu').value = item.plu;
+                document.getElementById('barcode').value = item.barcode;
+                document.getElementById('namaBarang').value = item.nama;
+                document.getElementById('qtyGudang').value = item.gudang;
+                document.getElementById('qtyToko').value = item.toko;
+                document.getElementById('qtyTotal').value = item.total;
+                
+                const btn = document.getElementById('btnSave');
+                btn.innerText = "Update";
+                btn.classList.replace('bg-blue-600', 'bg-green-600');
+                document.getElementById('btnCancel').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        // --- HAPUS ---
+        window.hapusData = function(id) {
+            if(confirm("Yakin hapus data ini selamanya?")) {
+                db.ref('stok_opname/' + id).remove();
+            }
+        };
+
+        // --- RESET ---
+        window.resetForm = function() {
+            form.reset();
+            document.getElementById('dataId').value = '';
+            document.getElementById('qtyTotal').value = 0;
+            const btn = document.getElementById('btnSave');
+            btn.innerText = "Simpan";
+            btn.classList.replace('bg-green-600', 'bg-blue-600');
+            document.getElementById('btnCancel').classList.add('hidden');
+        };
+
+        // --- EXPORT EXCEL ---
+        window.exportToExcel = function() {
+            if (localData.length === 0) return alert("Data kosong!");
+            
+            const cleanData = localData.map(item => ({
+                PLU: item.plu, Barcode: item.barcode, Nama: item.nama, 
+                Gudang: item.gudang, Toko: item.toko, Total: item.total
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(cleanData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Stok Opname");
+            XLSX.writeFile(wb, "Laporan_Stok.xlsx");
+        };
+    </script>
+</body>
+</html>
