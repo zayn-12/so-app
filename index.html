@@ -36,7 +36,7 @@
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-4 px-2">
             <div>
-                <h1 class="text-xl font-black text-blue-800 tracking-tight">SO FSUB <span class="text-gray-400 font-normal text-sm">| System</span></h1>
+                <h1 class="text-xl font-black text-blue-800 tracking-tight">SO FSUB <span class="text-gray-400 font-normal text-sm">| Monitoring stok</span></h1>
             </div>
             <div id="connectionStatus" class="text-[10px] bg-yellow-500 text-white px-3 py-1 rounded-full shadow-sm font-bold">
                 Connecting...
@@ -66,6 +66,7 @@
                                     <option value="PCE">PCE</option>
                                     <option value="BFD">BFD</option>
                                     <option value="ROKOK">ROKOK</option>
+                                    <option value="BEV">BEV</option>
                                     <option value="RCP">RCP</option>
                                     <option value="OTHERS">OTHERS</option>
                                 </select>
@@ -174,7 +175,7 @@
         // Variabel Global
         let allItems = [];
         let currentTab = 'MBF'; // Tab default saat pertama buka
-        const categories = ["MBF", "PCE", "BFD", "ROKOK", "RCP", "OTHERS"];
+        const categories = ["MBF", "PCE", "BFD", "ROKOK", "BEV", "RCP", "OTHERS"];
 
         // --- A. FUNGSI RENDER TABS (NAVIGASI) ---
         function renderTabs() {
