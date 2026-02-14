@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SO Online Focus - Mas zen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        /* Sembunyikan scrollbar tapi tetap bisa scroll secara horizontal */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .active-tab { border-bottom: 4px solid #2563eb; color: #2563eb; font-weight: 800; background-color: #eff6ff; }
+    </style>
+</head>
+<body class="bg-gray-50 p-2 md:p-4">
+
+    <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-4 px-2">
+            <div>
+                <h1 class="text-xl font-black text-blue-700">SO FSUB <span id="viewTitle" class="text-gray-400 text-sm font-normal">| Monitoring</span></h1>
+            </div>
+            <div id="connectionStatus" class="text-[10px] bg-green-500 text-white px-2 py-1 rounded-full shadow-sm">Online</div>
+        </div>
+
+        <div class="bg-white shadow-sm sticky top-0 z-50 mb-4 rounded-xl overflow-hidden border">
+            <div class="flex overflow-x-auto no-scrollbar" id="tabMenu">
+                </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <div class="lg:col-span-1">
+                <details class="bg-white rounded-xl shadow-md border-t-4 border-blue-600 group" open>
+                    <summary class="p-4 font-bold text-blue-600 cursor-pointer flex justify-between items-center list-none">
+                        <span><i class="fas fa-plus-circle mr-2"></i>INPUT DATA</span>
+                        <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <div class="p-5 pt-0">
+                        <form id="stockForm">
+                            <input type="hidden" id="dataId">
+                            <div class="mb-3">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase">Kategori Produk</label>
+                                <select id="kategori" class="w-full mt-1 p-2 border rounded bg-gray-50 font-bold focus:ring-2 focus:ring-blue-400 outline-none" required>
+                                    <option value="MBF">MBF</option>
+                                    <option value="BFD">PCE</option>
+                                    <option value="ROKOK">ROKOK</option>
+                                    <option value="IFD">IFD</option>
+                                    <option value="RCP">RCP</option>
+                                    <option value="OTHERS">OTHERS</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase">PLU</label>
+                                <input type="text" id="plu" class="w-full mt-1 p-2 border rounded" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase">Nama Barang</label>
+                                <input type="text" id="namaBarang" class="w-full mt-1 p-2 border rounded" required>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 mb-4 text-center">
+                                <div><label class="block text-[10px] font-bold text-blue-600">GUDANG</label>
+                                    <input type="number" id="qtyGudang" class="w-full p-2 border rounded bg-blue-50" value="0"></div>
+                                <div><label class="block text-[10px] font-bold text-green-600">TOKO</label>
+                                    <input type="number" id="qtyToko" class="w-full p-2 border rounded bg-green-50" value="0"></div>
+                                <div><label class="block text-[10px] font-bold text-red-600">LPPTK</label>
+                                    <input type="number" id="qtyLpptk" class="w-full p-2 border rounded bg-red-50" value="0"></div>
+                            </div>
+                            <div class="mb-4 bg-gray-900 p-3 rounded-lg text-center">
+                                <span class="text-[10px] text-gray-400 block uppercase">Hasil Akhir</span>
+                                <input type="number" id="qtyTotal" class="w-full bg-transparent text-white font-bold text-2xl text-center outline-none" value="0" readonly>
+                            </div>
+                            <button type="submit" id="btnSave" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 shadow-md">SIMPAN</button>
+                            <button type="button" id="btnCancel" onclick="resetForm()" class="hidden w-full mt-2 bg-gray-400 text-white py-2 rounded-lg text-xs">BATAL EDIT</button>
+                        </form>
+                    </div>
+                </details>
+                
+                <button onclick="exportToExcel()" class="w-full mt-4 bg-green-600 text-white font-bold py-3 rounded-xl shadow hover:bg-green-700 transition flex justify-center items-center gap-2">
+                    <i class="fas fa-file-excel"></i> DOWNLOAD SEMUA DATA
+                </button>
+            </div>
+
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border">
+                    <div id="tabHeader" class="bg-gray-800 p-4 text-white flex justify-between items-center">
+                        <h2 id="currentCategoryTitle" class="font-black tracking-widest uppercase">Pilih Kategori Diatas</h2>
+                        <span id="itemCount" class="text-xs bg-white/20 px-2 py-1 rounded">0 Item</span>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-gray-50 border-b text-[10px] font-bold text-gray-400 uppercase">
+                                <tr>
+                                    <th class="p-4">Produk</th>
+                                    <th class="p-4 text-center">Gudang</th>
+                                    <th class="p-4 text-center">Toko</th>
+                                    <th class="p-4 text-center">LPPTK</th>
+                                    <th class="p-4 text-center text-gray-800">Total</th>
+                                    <th class="p-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTable">
+                                <tr><td colspan="6" class="p-10 text-center text-gray-300">Silakan pilih kategori pada tab di atas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIG FIREBASE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzOXWAgJIPA9m8aqzXWhYHVXZZ5EooPAw",
+            authDomain: "so-udin.firebaseapp.com",
+            databaseURL: "https://so-udin-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "so-udin",
+            storageBucket: "so-udin.firebasestorage.app",
+            messagingSenderId: "786787556541",
+            appId: "1:786787556541:web:a3516cbe46db918f436bd4"
+   
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        let allItems = [];
+        let currentTab = 'MBF'; // Halaman pertama kali dibuka
+        const categories = ["MBF", "BFD", "IFD", "ROKOK", "RCP", "OTHERS"];
+
+        // 1. Buat Menu Tab Otomatis
+        function renderTabs() {
+            const menu = document.getElementById('tabMenu');
+            menu.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `px-6 py-4 text-xs font-bold whitespace-nowrap transition-all border-b-4 border-transparent ${currentTab === cat ? 'active-tab' : 'text-gray-400 hover:bg-gray-50'}`;
+                btn.innerText = cat;
+                btn.onclick = () => { currentTab = cat; renderData(); renderTabs(); };
+                menu.appendChild(btn);
+            });
+        }
+
+        // 2. Hitung Otomatis
+        function hitung() {
+            const g = parseInt(document.getElementById('qtyGudang').value) || 0;
+            const t = parseInt(document.getElementById('qtyToko').value) || 0;
+            const l = parseInt(document.getElementById('qtyLpptk').value) || 0;
+            document.getElementById('qtyTotal').value = (g + t) - l;
+        }
+        ['qtyGudang', 'qtyToko', 'qtyLpptk'].forEach(id => document.getElementById(id).addEventListener('input', hitung));
+
+        // 3. Baca Data & Render Per Kategori (Halaman)
+        db.ref('stok_opname').on('value', (snapshot) => {
+            allItems = [];
+            const data = snapshot.val();
+            if (data) {
+                Object.keys(data).forEach(key => allItems.push({ id: key, ...data[key] }));
+            }
+            renderData();
+        });
+
+        function renderData() {
+            renderTabs();
+            const tbody = document.getElementById('dataTable');
+            const title = document.getElementById('currentCategoryTitle');
+            const countBadge = document.getElementById('itemCount');
+            
+            title.innerText = currentTab;
+            tbody.innerHTML = '';
+
+            const filtered = allItems.filter(i => i.kategori === currentTab);
+            countBadge.innerText = `${filtered.length} Item`;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-gray-300">Tidak ada data di kategori ${currentTab}</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-blue-50/50 transition">
+                        <td class="p-4">
+                            <div class="font-bold text-gray-800">${item.plu}</div>
+                            <div class="text-[11px] text-gray-400 uppercase">${item.nama}</div>
+                        </td>
+                        <td class="p-4 text-center font-bold text-blue-600">${item.gudang}</td>
+                        <td class="p-4 text-center font-bold text-green-600">${item.toko}</td>
+                        <td class="p-4 text-center font-bold text-red-500">-${item.lpptk}</td>
+                        <td class="p-4 text-center font-black text-lg bg-gray-50 text-gray-700">${item.total}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="editData('${item.id}')" class="text-blue-500 hover:bg-blue-100 p-2 rounded"><i class="fas fa-pencil-alt"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        // 4. Simpan & Fungsi Lainnya
+        document.getElementById('stockForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('dataId').value;
+            const payload = {
+                kategori: document.getElementById('kategori').value,
+                plu: document.getElementById('plu').value,
+                nama: document.getElementById('namaBarang').value,
+                gudang: parseInt(document.getElementById('qtyGudang').value) || 0,
+                toko: parseInt(document.getElementById('qtyToko').value) || 0,
+                lpptk: parseInt(document.getElementById('qtyLpptk').value) || 0,
+                total: parseInt(document.getElementById('qtyTotal').value) || 0
+            };
+
+            if (id) db.ref('stok_opname/' + id).update(payload);
+            else {
+                db.ref('stok_opname').push(payload);
+                currentTab = payload.kategori; // Pindah otomatis ke tab kategori yg baru diinput
+            }
+            resetForm();
+        });
+
+        window.editData = (id) => {
+            const item = allItems.find(d => d.id === id);
+            document.getElementById('dataId').value = id;
+            document.getElementById('kategori').value = item.kategori;
+            document.getElementById('plu').value = item.plu;
+            document.getElementById('namaBarang').value = item.nama;
+            document.getElementById('qtyGudang').value = item.gudang;
+            document.getElementById('qtyToko').value = item.toko;
+            document.getElementById('qtyLpptk').value = item.lpptk;
+            document.getElementById('qtyTotal').value = item.total;
+            document.getElementById('btnSave').innerText = "UPDATE DATA";
+            document.getElementById('btnCancel').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.resetForm = () => {
+            document.getElementById('stockForm').reset();
+            document.getElementById('dataId').value = '';
+            document.getElementById('qtyTotal').value = 0;
+            document.getElementById('btnSave').innerText = "SIMPAN";
+            document.getElementById('btnCancel').classList.add('hidden');
+        };
+
+        window.exportToExcel = () => {
+            if (allItems.length === 0) return alert("Data kosong");
+            const sorted = allItems.sort((a, b) => a.kategori.localeCompare(b.kategori));
+            const clean = sorted.map(i => ({ KATEGORI: i.kategori, PLU: i.plu, NAMA: i.nama, GUDANG: i.gudang, TOKO: i.toko, LPPTK: i.lpptk, TOTAL: i.total }));
+            const ws = XLSX.utils.json_to_sheet(clean);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan_SO");
+            XLSX.writeFile(wb, "Laporan_SO_Tim_Udin.xlsx");
+        };
+
+        db.ref(".info/connected").on("value", (snap) => {
+            const s = document.getElementById("connectionStatus");
+            s.innerText = snap.val() ? "Online" : "Offline";
+            s.className = snap.val() ? "text-[10px] bg-green-500 text-white px-2 py-1 rounded-full shadow-sm" : "text-[10px] bg-red-500 text-white px-2 py-1 rounded-full shadow-sm";
+        });
+    </script>
+</body>
+</html>
