@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SO Online Focus - Mas zen</title>
+    <title>SO Online Focus - Pak Zen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -12,23 +12,38 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        /* Sembunyikan scrollbar tapi tetap bisa scroll secara horizontal */
+        /* CSS Khusus untuk Scrollbar Tab yang rapi */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .active-tab { border-bottom: 4px solid #2563eb; color: #2563eb; font-weight: 800; background-color: #eff6ff; }
+        .active-tab { 
+            border-bottom: 4px solid #2563eb; 
+            color: #2563eb; 
+            font-weight: 800; 
+            background-color: #eff6ff; 
+        }
+        .tab-btn {
+            white-space: nowrap;
+            padding: 1rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            border-bottom: 4px solid transparent;
+        }
     </style>
 </head>
-<body class="bg-gray-50 p-2 md:p-4">
+<body class="bg-gray-50 p-2 md:p-4 font-sans text-gray-800">
 
     <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-4 px-2">
             <div>
-                <h1 class="text-xl font-black text-blue-700">SO FSUB <span id="viewTitle" class="text-gray-400 text-sm font-normal">| Monitoring</span></h1>
+                <h1 class="text-xl font-black text-blue-800 tracking-tight">SO FSUB <span class="text-gray-400 font-normal text-sm">| System</span></h1>
             </div>
-            <div id="connectionStatus" class="text-[10px] bg-green-500 text-white px-2 py-1 rounded-full shadow-sm">Online</div>
+            <div id="connectionStatus" class="text-[10px] bg-yellow-500 text-white px-3 py-1 rounded-full shadow-sm font-bold">
+                Connecting...
+            </div>
         </div>
 
-        <div class="bg-white shadow-sm sticky top-0 z-50 mb-4 rounded-xl overflow-hidden border">
+        <div class="bg-white shadow-sm sticky top-0 z-50 mb-4 rounded-xl overflow-hidden border border-gray-100">
             <div class="flex overflow-x-auto no-scrollbar" id="tabMenu">
                 </div>
         </div>
@@ -37,76 +52,95 @@
             
             <div class="lg:col-span-1">
                 <details class="bg-white rounded-xl shadow-md border-t-4 border-blue-600 group" open>
-                    <summary class="p-4 font-bold text-blue-600 cursor-pointer flex justify-between items-center list-none">
+                    <summary class="p-4 font-bold text-blue-600 cursor-pointer flex justify-between items-center list-none hover:bg-gray-50 select-none">
                         <span><i class="fas fa-plus-circle mr-2"></i>INPUT DATA</span>
-                        <i class="fas fa-chevron-down group-open:rotate-180 transition-transform"></i>
+                        <i class="fas fa-chevron-down group-open:rotate-180 transition-transform text-gray-400"></i>
                     </summary>
-                    <div class="p-5 pt-0">
+                    
+                    <div class="p-5 pt-0 border-t border-dashed border-gray-100 mt-2">
                         <form id="stockForm">
-                            <input type="hidden" id="dataId">
-                            <div class="mb-3">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase">Kategori Produk</label>
-                                <select id="kategori" class="w-full mt-1 p-2 border rounded bg-gray-50 font-bold focus:ring-2 focus:ring-blue-400 outline-none" required>
+                            <input type="hidden" id="dataId"> <div class="mb-3 mt-4">
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Kategori Produk</label>
+                                <select id="kategori" class="w-full p-2.5 border border-gray-300 rounded-lg bg-yellow-50 font-bold text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none shadow-sm" required>
                                     <option value="MBF">MBF</option>
-                                    <option value="BFD">PCE</option>
+                                    <option value="PCE">PCE</option>
+                                    <option value="BFD">BFD</option>
                                     <option value="ROKOK">ROKOK</option>
-                                    <option value="IFD">IFD</option>
                                     <option value="RCP">RCP</option>
                                     <option value="OTHERS">OTHERS</option>
                                 </select>
                             </div>
+
                             <div class="mb-3">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase">PLU</label>
-                                <input type="text" id="plu" class="w-full mt-1 p-2 border rounded" required>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">PLU / Kode</label>
+                                <input type="text" id="plu" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="Cth: 899123..." required>
                             </div>
                             <div class="mb-3">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase">Nama Barang</label>
-                                <input type="text" id="namaBarang" class="w-full mt-1 p-2 border rounded" required>
+                                <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Nama Barang</label>
+                                <input type="text" id="namaBarang" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" placeholder="Nama Produk" required>
                             </div>
+
                             <div class="grid grid-cols-3 gap-2 mb-4 text-center">
-                                <div><label class="block text-[10px] font-bold text-blue-600">GUDANG</label>
-                                    <input type="number" id="qtyGudang" class="w-full p-2 border rounded bg-blue-50" value="0"></div>
-                                <div><label class="block text-[10px] font-bold text-green-600">TOKO</label>
-                                    <input type="number" id="qtyToko" class="w-full p-2 border rounded bg-green-50" value="0"></div>
-                                <div><label class="block text-[10px] font-bold text-red-600">LPPTK</label>
-                                    <input type="number" id="qtyLpptk" class="w-full p-2 border rounded bg-red-50" value="0"></div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-blue-600 mb-1">GUDANG</label>
+                                    <input type="number" id="qtyGudang" class="w-full p-2 border rounded-lg bg-blue-50 text-center font-semibold" value="0">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-green-600 mb-1">TOKO</label>
+                                    <input type="number" id="qtyToko" class="w-full p-2 border rounded-lg bg-green-50 text-center font-semibold" value="0">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-red-600 mb-1">LPPTK (-)</label>
+                                    <input type="number" id="qtyLpptk" class="w-full p-2 border rounded-lg bg-red-50 text-center font-semibold text-red-600" value="0">
+                                </div>
                             </div>
-                            <div class="mb-4 bg-gray-900 p-3 rounded-lg text-center">
-                                <span class="text-[10px] text-gray-400 block uppercase">Hasil Akhir</span>
-                                <input type="number" id="qtyTotal" class="w-full bg-transparent text-white font-bold text-2xl text-center outline-none" value="0" readonly>
+
+                            <div class="mb-4 bg-gray-900 p-3 rounded-lg text-center shadow-inner">
+                                <span class="text-[10px] text-gray-400 block uppercase tracking-widest">Total Stok Fisik</span>
+                                <input type="number" id="qtyTotal" class="w-full bg-transparent text-white font-black text-2xl text-center outline-none" value="0" readonly>
                             </div>
-                            <button type="submit" id="btnSave" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 shadow-md">SIMPAN</button>
-                            <button type="button" id="btnCancel" onclick="resetForm()" class="hidden w-full mt-2 bg-gray-400 text-white py-2 rounded-lg text-xs">BATAL EDIT</button>
+
+                            <div class="flex flex-col gap-2">
+                                <button type="submit" id="btnSave" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 shadow-lg transition-all transform active:scale-95">
+                                    <i class="fas fa-save mr-2"></i>SIMPAN DATA
+                                </button>
+                                <button type="button" id="btnCancel" onclick="resetForm()" class="hidden w-full bg-gray-400 text-white font-bold py-2 rounded-lg hover:bg-gray-500 transition-all text-xs">
+                                    BATAL EDIT
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </details>
                 
-                <button onclick="exportToExcel()" class="w-full mt-4 bg-green-600 text-white font-bold py-3 rounded-xl shadow hover:bg-green-700 transition flex justify-center items-center gap-2">
-                    <i class="fas fa-file-excel"></i> DOWNLOAD SEMUA DATA
+                <button onclick="exportToExcel()" class="w-full mt-4 bg-green-600 text-white font-bold py-3 rounded-xl shadow hover:bg-green-700 transition flex justify-center items-center gap-2 transform active:scale-95">
+                    <i class="fas fa-file-excel text-lg"></i> DOWNLOAD LAPORAN
                 </button>
             </div>
 
             <div class="lg:col-span-3">
-                <div class="bg-white rounded-xl shadow-md overflow-hidden border">
-                    <div id="tabHeader" class="bg-gray-800 p-4 text-white flex justify-between items-center">
-                        <h2 id="currentCategoryTitle" class="font-black tracking-widest uppercase">Pilih Kategori Diatas</h2>
-                        <span id="itemCount" class="text-xs bg-white/20 px-2 py-1 rounded">0 Item</span>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 h-full flex flex-col">
+                    <div class="bg-gray-800 p-4 text-white flex justify-between items-center shadow-md">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-layer-group text-yellow-400"></i>
+                            <h2 id="currentCategoryTitle" class="font-black tracking-widest uppercase text-lg">LOADING...</h2>
+                        </div>
+                        <span id="itemCount" class="text-xs font-bold bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">0 Item</span>
                     </div>
                     
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto flex-grow">
                         <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 border-b text-[10px] font-bold text-gray-400 uppercase">
+                            <thead class="bg-gray-50 border-b text-[10px] font-bold text-gray-500 uppercase tracking-wider sticky top-0">
                                 <tr>
-                                    <th class="p-4">Produk</th>
-                                    <th class="p-4 text-center">Gudang</th>
-                                    <th class="p-4 text-center">Toko</th>
-                                    <th class="p-4 text-center">LPPTK</th>
-                                    <th class="p-4 text-center text-gray-800">Total</th>
+                                    <th class="p-4">Produk / PLU</th>
+                                    <th class="p-4 text-center text-blue-600">Gudang</th>
+                                    <th class="p-4 text-center text-green-600">Toko</th>
+                                    <th class="p-4 text-center text-red-600">LPPTK</th>
+                                    <th class="p-4 text-center text-gray-800 bg-gray-100">Total</th>
                                     <th class="p-4 text-center">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="dataTable">
-                                <tr><td colspan="6" class="p-10 text-center text-gray-300">Silakan pilih kategori pada tab di atas...</td></tr>
+                            <tbody id="dataTable" class="divide-y divide-gray-100">
+                                <tr><td colspan="6" class="p-10 text-center text-gray-400 italic">Memuat data...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -116,7 +150,9 @@
     </div>
 
     <script>
-        // --- CONFIG FIREBASE ---
+        // ==========================================
+        // 1. CONFIG FIREBASE (WAJIB DIISI)
+        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyBzOXWAgJIPA9m8aqzXWhYHVXZZ5EooPAw",
             authDomain: "so-udin.firebaseapp.com",
@@ -127,87 +163,136 @@
             appId: "1:786787556541:web:a3516cbe46db918f436bd4"
    
         };
+        // ==========================================
 
-        firebase.initializeApp(firebaseConfig);
+        // Inisialisasi Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.database();
         
+        // Variabel Global
         let allItems = [];
-        let currentTab = 'MBF'; // Halaman pertama kali dibuka
-        const categories = ["MBF", "PCE", "ROKOK", "IFD", "RCP", "OTHERS"];
+        let currentTab = 'MBF'; // Tab default saat pertama buka
+        const categories = ["MBF", "PCE", "BFD", "ROKOK", "RCP", "OTHERS"];
 
-        // 1. Buat Menu Tab Otomatis
+        // --- A. FUNGSI RENDER TABS (NAVIGASI) ---
         function renderTabs() {
             const menu = document.getElementById('tabMenu');
             menu.innerHTML = '';
+            
             categories.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = `px-6 py-4 text-xs font-bold whitespace-nowrap transition-all border-b-4 border-transparent ${currentTab === cat ? 'active-tab' : 'text-gray-400 hover:bg-gray-50'}`;
+                // Style tombol: Jika aktif beda warna
+                const isActive = currentTab === cat;
+                btn.className = `tab-btn ${isActive ? 'active-tab' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-50'}`;
                 btn.innerText = cat;
-                btn.onclick = () => { currentTab = cat; renderData(); renderTabs(); };
+                
+                // Event Klik Tab
+                btn.onclick = () => { 
+                    currentTab = cat; 
+                    renderData(); // Render ulang tabel
+                    renderTabs(); // Render ulang tombol (biar warna pindah)
+                };
                 menu.appendChild(btn);
             });
         }
 
-        // 2. Hitung Otomatis
+        // --- B. HITUNG OTOMATIS (Gudang + Toko - LPPTK) ---
         function hitung() {
             const g = parseInt(document.getElementById('qtyGudang').value) || 0;
             const t = parseInt(document.getElementById('qtyToko').value) || 0;
             const l = parseInt(document.getElementById('qtyLpptk').value) || 0;
-            document.getElementById('qtyTotal').value = (g + t) - l;
+            
+            // Rumus Utama
+            const total = (g + t) - l;
+            document.getElementById('qtyTotal').value = total;
         }
-        ['qtyGudang', 'qtyToko', 'qtyLpptk'].forEach(id => document.getElementById(id).addEventListener('input', hitung));
 
-        // 3. Baca Data & Render Per Kategori (Halaman)
+        // Pasang pendengar ketikan di form
+        ['qtyGudang', 'qtyToko', 'qtyLpptk'].forEach(id => {
+            document.getElementById(id).addEventListener('input', hitung);
+        });
+
+        // --- C. BACA DATA DARI FIREBASE ---
         db.ref('stok_opname').on('value', (snapshot) => {
-            allItems = [];
+            allItems = []; // Kosongkan dulu
             const data = snapshot.val();
+            
             if (data) {
-                Object.keys(data).forEach(key => allItems.push({ id: key, ...data[key] }));
+                // Ubah format data Firebase ke Array
+                Object.keys(data).forEach(key => {
+                    allItems.push({ id: key, ...data[key] });
+                });
             }
+            
+            // Tampilkan data sesuai tab yang sedang aktif
             renderData();
         });
 
+        // --- D. TAMPILKAN DATA KE TABEL ---
         function renderData() {
-            renderTabs();
+            renderTabs(); // Pastikan tab ter-update
+            
             const tbody = document.getElementById('dataTable');
             const title = document.getElementById('currentCategoryTitle');
             const countBadge = document.getElementById('itemCount');
             
+            // Set Judul Halaman
             title.innerText = currentTab;
             tbody.innerHTML = '';
 
+            // Filter data: Ambil hanya yang kategorinya sama dengan Tab Aktif
             const filtered = allItems.filter(i => i.kategori === currentTab);
             countBadge.innerText = `${filtered.length} Item`;
 
+            // Jika kosong
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-20 text-center text-gray-300">Tidak ada data di kategori ${currentTab}</td></tr>`;
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-20 text-center flex flex-col items-center justify-center text-gray-300">
+                            <i class="fas fa-clipboard-list text-4xl mb-2"></i>
+                            <span>Belum ada data di kategori <b>${currentTab}</b></span>
+                        </td>
+                    </tr>`;
                 return;
             }
 
+            // Loop Data
             filtered.forEach(item => {
                 tbody.innerHTML += `
-                    <tr class="border-b hover:bg-blue-50/50 transition">
-                        <td class="p-4">
-                            <div class="font-bold text-gray-800">${item.plu}</div>
-                            <div class="text-[11px] text-gray-400 uppercase">${item.nama}</div>
+                    <tr class="border-b hover:bg-blue-50/40 transition duration-150 group">
+                        <td class="p-4 align-middle">
+                            <div class="font-bold text-gray-800 text-sm">${item.plu}</div>
+                            <div class="text-[11px] text-gray-500 uppercase font-medium mt-1">${item.nama}</div>
                         </td>
-                        <td class="p-4 text-center font-bold text-blue-600">${item.gudang}</td>
-                        <td class="p-4 text-center font-bold text-green-600">${item.toko}</td>
-                        <td class="p-4 text-center font-bold text-red-500">-${item.lpptk}</td>
-                        <td class="p-4 text-center font-black text-lg bg-gray-50 text-gray-700">${item.total}</td>
-                        <td class="p-4 text-center">
-                            <button onclick="editData('${item.id}')" class="text-blue-500 hover:bg-blue-100 p-2 rounded"><i class="fas fa-pencil-alt"></i></button>
+                        <td class="p-4 text-center font-bold text-blue-600 align-middle">${item.gudang}</td>
+                        <td class="p-4 text-center font-bold text-green-600 align-middle">${item.toko}</td>
+                        <td class="p-4 text-center font-bold text-red-500 align-middle">-${item.lpptk}</td>
+                        <td class="p-4 text-center font-black text-lg bg-gray-50 text-gray-800 align-middle border-l border-r border-gray-100 shadow-sm">${item.total}</td>
+                        <td class="p-4 text-center align-middle">
+                            <div class="flex justify-center items-center gap-2">
+                                <button onclick="editData('${item.id}')" class="bg-blue-100 text-blue-600 hover:bg-blue-600 hover:text-white p-2 rounded-lg transition shadow-sm" title="Edit">
+                                    <i class="fas fa-pencil-alt text-xs"></i>
+                                </button>
+                                <button onclick="hapusData('${item.id}')" class="bg-red-100 text-red-600 hover:bg-red-600 hover:text-white p-2 rounded-lg transition shadow-sm" title="Hapus">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>`;
             });
         }
 
-        // 4. Simpan & Fungsi Lainnya
+        // --- E. FUNGSI SIMPAN (TAMBAH / UPDATE) ---
         document.getElementById('stockForm').addEventListener('submit', (e) => {
             e.preventDefault();
+            
             const id = document.getElementById('dataId').value;
+            const kategoriInput = document.getElementById('kategori').value;
+
             const payload = {
-                kategori: document.getElementById('kategori').value,
+                kategori: kategoriInput,
                 plu: document.getElementById('plu').value,
                 nama: document.getElementById('namaBarang').value,
                 gudang: parseInt(document.getElementById('qtyGudang').value) || 0,
@@ -216,51 +301,109 @@
                 total: parseInt(document.getElementById('qtyTotal').value) || 0
             };
 
-            if (id) db.ref('stok_opname/' + id).update(payload);
-            else {
+            if (id) {
+                // Mode Edit: Update data lama
+                db.ref('stok_opname/' + id).update(payload);
+            } else {
+                // Mode Baru: Push data baru
                 db.ref('stok_opname').push(payload);
-                currentTab = payload.kategori; // Pindah otomatis ke tab kategori yg baru diinput
+                // Pindah tampilan ke kategori yg baru diinput biar langsung kelihatan
+                currentTab = kategoriInput; 
             }
+            
             resetForm();
         });
 
+        // --- F. FUNGSI EDIT ---
         window.editData = (id) => {
+            // Cari data di array lokal
             const item = allItems.find(d => d.id === id);
-            document.getElementById('dataId').value = id;
-            document.getElementById('kategori').value = item.kategori;
-            document.getElementById('plu').value = item.plu;
-            document.getElementById('namaBarang').value = item.nama;
-            document.getElementById('qtyGudang').value = item.gudang;
-            document.getElementById('qtyToko').value = item.toko;
-            document.getElementById('qtyLpptk').value = item.lpptk;
-            document.getElementById('qtyTotal').value = item.total;
-            document.getElementById('btnSave').innerText = "UPDATE DATA";
-            document.getElementById('btnCancel').classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            if(item) {
+                // Isi Form
+                document.getElementById('dataId').value = id;
+                document.getElementById('kategori').value = item.kategori;
+                document.getElementById('plu').value = item.plu;
+                document.getElementById('namaBarang').value = item.nama;
+                document.getElementById('qtyGudang').value = item.gudang;
+                document.getElementById('qtyToko').value = item.toko;
+                document.getElementById('qtyLpptk').value = item.lpptk;
+                document.getElementById('qtyTotal').value = item.total;
+                
+                // Ubah tampilan tombol
+                const btnSave = document.getElementById('btnSave');
+                btnSave.innerHTML = '<i class="fas fa-sync mr-2"></i>UPDATE DATA';
+                btnSave.classList.replace('bg-blue-600', 'bg-green-600');
+                btnSave.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+                
+                document.getElementById('btnCancel').classList.remove('hidden');
+                
+                // Scroll ke atas (ke form)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Buka detail form jika tertutup
+                document.querySelector('details').open = true;
+            }
         };
 
+        // --- G. FUNGSI HAPUS ---
+        window.hapusData = (id) => {
+            if(confirm("yakin ingin MENGHAPUS data barang ini secara permanen?")) {
+                db.ref('stok_opname/' + id).remove();
+            }
+        };
+
+        // --- H. FUNGSI RESET FORM ---
         window.resetForm = () => {
             document.getElementById('stockForm').reset();
             document.getElementById('dataId').value = '';
             document.getElementById('qtyTotal').value = 0;
-            document.getElementById('btnSave').innerText = "SIMPAN";
+            
+            const btnSave = document.getElementById('btnSave');
+            btnSave.innerHTML = '<i class="fas fa-save mr-2"></i>SIMPAN DATA';
+            btnSave.classList.replace('bg-green-600', 'bg-blue-600');
+            btnSave.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
+            
             document.getElementById('btnCancel').classList.add('hidden');
         };
 
+        // --- I. EXPORT KE EXCEL (SEMUA DATA) ---
         window.exportToExcel = () => {
-            if (allItems.length === 0) return alert("Data kosong");
-            const sorted = allItems.sort((a, b) => a.kategori.localeCompare(b.kategori));
-            const clean = sorted.map(i => ({ KATEGORI: i.kategori, PLU: i.plu, NAMA: i.nama, GUDANG: i.gudang, TOKO: i.toko, LPPTK: i.lpptk, TOTAL: i.total }));
-            const ws = XLSX.utils.json_to_sheet(clean);
+            if (allItems.length === 0) return alert("Belum ada data untuk didownload.");
+            
+            // Urutkan data berdasarkan Kategori agar rapi di Excel
+            const sortedData = allItems.sort((a, b) => a.kategori.localeCompare(b.kategori));
+            
+            // Format Data Excel
+            const cleanData = sortedData.map(i => ({ 
+                "KATEGORI": i.kategori, 
+                "PLU": i.plu, 
+                "NAMA BARANG": i.nama, 
+                "STOK GUDANG": i.gudang, 
+                "STOK TOKO": i.toko, 
+                "LPPTK (MINUS)": i.lpptk, 
+                "TOTAL AKHIR": i.total 
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(cleanData);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Laporan_SO");
-            XLSX.writeFile(wb, "Laporan_SO_Tim_Udin.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan Stok Opname");
+            
+            // Nama File Pakai Tanggal
+            const date = new Date().toISOString().slice(0,10);
+            XLSX.writeFile(wb, `Laporan_SO_Tim_Udin_${date}.xlsx`);
         };
 
+        // --- J. STATUS KONEKSI ---
         db.ref(".info/connected").on("value", (snap) => {
-            const s = document.getElementById("connectionStatus");
-            s.innerText = snap.val() ? "Online" : "Offline";
-            s.className = snap.val() ? "text-[10px] bg-green-500 text-white px-2 py-1 rounded-full shadow-sm" : "text-[10px] bg-red-500 text-white px-2 py-1 rounded-full shadow-sm";
+            const el = document.getElementById("connectionStatus");
+            if (snap.val() === true) {
+                el.innerText = "ONLINE";
+                el.className = "text-[10px] bg-green-500 text-white px-3 py-1 rounded-full shadow-sm font-bold animate-pulse";
+            } else {
+                el.innerText = "OFFLINE";
+                el.className = "text-[10px] bg-red-500 text-white px-3 py-1 rounded-full shadow-sm font-bold";
+            }
         });
     </script>
 </body>
