@@ -28,7 +28,6 @@
             min-height: 100vh;
         }
 
-        /* HEADER UTAMA (BARU) */
         .main-header {
             background: white;
             padding: 15px 20px;
@@ -37,118 +36,67 @@
             justify-content: space-between;
             align-items: center;
         }
-        .app-title {
-            font-weight: 800;
-            color: var(--secondary-color);
-            margin: 0;
-            font-size: 1.25rem;
-            letter-spacing: -0.5px;
-        }
+        .app-title { font-weight: 800; color: var(--secondary-color); margin: 0; font-size: 1.25rem; letter-spacing: -0.5px; }
+        
         .db-status {
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background: #eee;
-            color: #777;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px;
+            background: #eee; color: #777; display: flex; align-items: center; gap: 5px;
         }
-        .status-dot {
-            width: 8px; height: 8px; border-radius: 50%; background: #ccc;
-        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
         .status-online { background: #e6fffa; color: #00b894; border: 1px solid #00b894; }
         .status-online .status-dot { background: #00b894; box-shadow: 0 0 5px #00b894; }
         .status-offline { background: #fff5f5; color: #d63031; border: 1px solid #d63031; }
         .status-offline .status-dot { background: #d63031; }
 
-        /* Navigasi Tabs */
         .sticky-tabs { 
             position: sticky; top: 0; z-index: 1020; 
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
-            padding-top: 5px;
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+            padding-top: 5px; box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
         }
         .nav-pills .nav-link { 
-            color: rgba(255,255,255,0.7); 
-            font-weight: 600; font-size: 0.9rem;
-            border-radius: 12px 12px 0 0;
-            padding: 12px;
-            transition: 0.3s;
+            color: rgba(255,255,255,0.7); font-weight: 600; font-size: 0.9rem;
+            border-radius: 12px 12px 0 0; padding: 12px; transition: 0.3s;
         }
-        .nav-pills .nav-link.active { 
-            background: var(--bg-body); 
-            color: var(--primary-color); 
-            font-weight: 800;
-        }
-        .nav-pills .nav-link:hover:not(.active) { color: white; }
+        .nav-pills .nav-link.active { background: var(--bg-body); color: var(--primary-color); font-weight: 800; }
 
-        /* Sub-nav Kategori */
         .sub-nav-container {
             background: white; padding: 10px; overflow-x: auto;
-            display: flex; gap: 8px; border-bottom: 1px solid #e0e0e0;
-            border-radius: 12px;
+            display: flex; gap: 8px; border-bottom: 1px solid #e0e0e0; border-radius: 12px;
         }
         .btn-kat {
             border: 1px solid #dee2e6; background: white; padding: 6px 16px;
             border-radius: 20px; font-size: 0.75rem; font-weight: 600;
             white-space: nowrap; transition: 0.3s;
         }
-        .btn-kat.active {
-            background: var(--primary-color); color: white;
-            border-color: var(--primary-color);
-            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
-        }
+        .btn-kat.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
 
-        .card { 
-            border: none; border-radius: 15px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03); 
-            margin-bottom: 20px; background: white;
-        }
+        /* FITUR PENCARIAN (BARU) */
+        .search-container { position: relative; margin-bottom: 15px; }
+        .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #b2bec3; }
+        .search-input { padding-left: 40px !important; border-radius: 12px !important; border: 1.5px solid #edf2f7 !important; }
 
-        /* Form Styling */
+        .card { border: none; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); margin-bottom: 20px; background: white; }
         .form-label { font-weight: 600; font-size: 0.85rem; color: #636e72; }
-        .form-control, .form-select {
-            border-radius: 10px; border: 1.5px solid #edf2f7; padding: 10px;
-        }
-        .form-control:focus { box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15); border-color: var(--primary-color); }
+        .form-control, .form-select { border-radius: 10px; border: 1.5px solid #edf2f7; padding: 10px; }
 
-        /* Tabel & Inline Edit */
+        /* IMPORT EXCEL SECTION (BARU) */
+        .import-box { border: 2px dashed #dee2e6; border-radius: 12px; padding: 15px; text-align: center; background: #fafafa; }
+
         .editable-input {
             width: 70px; border: 1px solid transparent; background: #f8f9fa;
-            text-align: center; font-weight: 700; padding: 6px; border-radius: 8px;
-            font-size: 0.9rem; transition: 0.2s;
+            text-align: center; font-weight: 700; padding: 6px; border-radius: 8px; font-size: 0.9rem;
         }
-        .editable-input:focus {
-            background: white; border-color: var(--primary-color); outline: none;
-            box-shadow: 0 0 8px rgba(67, 97, 238, 0.2);
-        }
+        .editable-input:focus { background: white; border-color: var(--primary-color); outline: none; }
         
         .selisih-box { padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 0.85rem; }
         .minus { background: #ffebeb; color: #d63031; border: 1px solid #ffcccc; }
         .plus { background: #e6fffa; color: #00b894; border: 1px solid #b3f5e1; }
         .zero { background: #f1f2f6; color: #b2bec3; }
 
-        .btn-download {
-            background: #10ac84; color: white; border: none;
-            border-radius: 8px; padding: 8px 16px; font-weight: 600; font-size: 0.85rem;
-        }
-        .btn-reset {
-            color: #ee5253; font-weight: 600; font-size: 0.8rem; text-decoration: none;
-            border: 1px solid #ee5253; padding: 6px 12px; border-radius: 8px;
-        }
+        .btn-download { background: #10ac84; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-weight: 600; font-size: 0.85rem; }
+        .btn-reset { color: #ee5253; font-weight: 600; font-size: 0.8rem; border: 1px solid #ee5253; padding: 6px 12px; border-radius: 8px; text-decoration: none; }
 
-        /* Footer (BARU) */
-        footer {
-            margin-top: auto;
-            background: white;
-            padding: 20px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #b2bec3;
-            border-top: 1px solid #f1f2f6;
-        }
+        footer { margin-top: auto; background: white; padding: 20px; text-align: center; font-size: 0.75rem; color: #b2bec3; border-top: 1px solid #f1f2f6; }
     </style>
 </head>
 <body>
@@ -197,39 +145,28 @@
                         </select>
                     </div>
                     <div class="row g-3 mb-3">
-                        <div class="col-4">
-                            <label class="form-label">PLU</label>
-                            <input type="number" class="form-control" id="plu" placeholder="000" required>
-                        </div>
-                        <div class="col-8">
-                            <label class="form-label">Nama Barang</label>
-                            <input type="text" class="form-control" id="nama" placeholder="Contoh: Indomie Goreng" required>
-                        </div>
+                        <div class="col-4"><label class="form-label">PLU</label><input type="number" class="form-control" id="plu" required></div>
+                        <div class="col-8"><label class="form-label">Nama Barang</label><input type="text" class="form-control" id="nama" required></div>
                     </div>
                     <div class="row g-3 mb-4">
-                        <div class="col-4">
-                            <label class="form-label text-muted">Stok Komp</label>
-                            <input type="number" class="form-control bg-light" id="lpptk" value="0">
-                        </div>
-                        <div class="col-4">
-                            <label class="form-label text-primary">Gudang</label>
-                            <input type="number" class="form-control border-primary" id="gudang" value="0">
-                        </div>
-                        <div class="col-4">
-                            <label class="form-label text-primary">Toko</label>
-                            <input type="number" class="form-control border-primary" id="toko" value="0">
-                        </div>
+                        <div class="col-4"><label class="form-label text-muted">Stok Komp</label><input type="number" class="form-control bg-light" id="lpptk" value="0"></div>
+                        <div class="col-4"><label class="form-label text-primary">Gudang</label><input type="number" class="form-control border-primary" id="gudang" value="0"></div>
+                        <div class="col-4"><label class="form-label text-primary">Toko</label><input type="number" class="form-control border-primary" id="toko" value="0"></div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">
-                        SIMPAN DATA <i class="fas fa-paper-plane ms-2"></i>
-                    </button>
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold shadow-sm mb-4">SIMPAN DATA</button>
                 </form>
+
+                <div class="import-box">
+                    <p class="small fw-bold mb-2 text-muted"><i class="fas fa-file-import me-1"></i> Atau Import via Excel</p>
+                    <input type="file" id="importFile" class="form-control form-control-sm" accept=".xlsx, .xls">
+                    <div class="mt-2" style="font-size: 10px; color: #999;">Format: Kategori, PLU, Nama, LPPTK, Gudang, Toko</div>
+                </div>
             </div>
         </div>
 
         <div class="tab-pane fade" id="panel-hasil">
             
-            <div class="sub-nav-container mb-4 shadow-sm">
+            <div class="sub-nav-container mb-3 shadow-sm">
                 <button class="btn-kat active" onclick="filterData('SEMUA', this)">SEMUA</button>
                 <button class="btn-kat" onclick="filterData('MBF', this)">MBF</button>
                 <button class="btn-kat" onclick="filterData('PCE', this)">PCE</button>
@@ -240,17 +177,17 @@
                 <button class="btn-kat" onclick="filterData('OTHER', this)">OTHER</button>
             </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-3 px-1">
-                <button class="btn btn-download shadow-sm" onclick="downloadExcel()">
-                    <i class="fas fa-file-excel me-2"></i>Download Excel
-                </button>
-                <button class="btn btn-reset bg-white" onclick="resetSemua()">
-                    <i class="fas fa-trash-alt me-1"></i> Reset DB
-                </button>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchItem" class="form-control search-input" placeholder="Cari Nama Barang atau PLU..." onkeyup="renderTabel()">
             </div>
 
-            <div id="containerHasil">
-                </div>
+            <div class="d-flex justify-content-between align-items-center mb-3 px-1">
+                <button class="btn btn-download shadow-sm" onclick="downloadExcel()"><i class="fas fa-file-excel me-2"></i>Export Excel</button>
+                <button class="btn btn-reset bg-white" onclick="resetSemua()"><i class="fas fa-trash-alt me-1"></i> Reset DB</button>
+            </div>
+
+            <div id="containerHasil"></div>
         </div>
 
     </div>
@@ -265,7 +202,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // --- CONFIG FIREBASE UDIN (PASTE DI SINI) ---
+    // --- CONFIG FIREBASE UDIN ---
     const firebaseConfig = {
             apiKey: "AIzaSyBzOXWAgJIPA9m8aqzXWhYHVXZZ5EooPAw",
             authDomain: "so-udin.firebaseapp.com",
@@ -282,40 +219,61 @@
     const dbRef = ref(db, 'stok_opname');
     const connectedRef = ref(db, ".info/connected");
 
-    // CEK KONEKSI (FITUR BARU)
     onValue(connectedRef, (snap) => {
         const el = document.getElementById('dbStatus');
         if (snap.val() === true) {
-            el.innerHTML = '<div class="status-dot"></div> Online';
-            el.className = 'db-status status-online shadow-sm';
+            el.innerHTML = '<div class="status-dot"></div> Online'; el.className = 'db-status status-online shadow-sm';
         } else {
-            el.innerHTML = '<div class="status-dot"></div> Offline';
-            el.className = 'db-status status-offline';
+            el.innerHTML = '<div class="status-dot"></div> Offline'; el.className = 'db-status status-offline';
         }
     });
 
     let currentFilter = 'SEMUA';
     let allData = {};
 
-    // 1. Simpan Data
+    // 1. Simpan Satuan
     document.getElementById('formStok').addEventListener('submit', (e) => {
         e.preventDefault();
         const data = {
-            kategori: document.getElementById('kategori').value,
-            plu: document.getElementById('plu').value,
-            nama: document.getElementById('nama').value,
-            lpptk: parseFloat(document.getElementById('lpptk').value) || 0,
-            gudang: parseFloat(document.getElementById('gudang').value) || 0,
-            toko: parseFloat(document.getElementById('toko').value) || 0,
+            kategori: document.getElementById('kategori').value, plu: document.getElementById('plu').value,
+            nama: document.getElementById('nama').value, lpptk: parseFloat(document.getElementById('lpptk').value) || 0,
+            gudang: parseFloat(document.getElementById('gudang').value) || 0, toko: parseFloat(document.getElementById('toko').value) || 0,
             timestamp: new Date().toISOString()
         };
-        push(dbRef, data).then(() => {
-            document.getElementById('formStok').reset();
-            alert("✅ Data berhasil disimpan!");
-        });
+        push(dbRef, data).then(() => { document.getElementById('formStok').reset(); alert("✅ Tersimpan!"); });
     });
 
-    // 2. Filter Tab Kategori
+    // 2. IMPORT EXCEL (FITUR BARU)
+    document.getElementById('importFile').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            const bstr = evt.target.result;
+            const wb = XLSX.read(bstr, { type: 'binary' });
+            const wsname = wb.SheetNames[0];
+            const ws = wb.Sheets[wsname];
+            const data = XLSX.utils.sheet_to_json(ws);
+            
+            if(confirm(`Import ${data.length} item ke database?`)) {
+                data.forEach(row => {
+                    push(dbRef, {
+                        kategori: (row.Kategori || 'MAKANAN').toUpperCase(),
+                        plu: row.PLU || '',
+                        nama: row.Nama || '',
+                        lpptk: parseFloat(row.LPPTK) || 0,
+                        gudang: parseFloat(row.Gudang) || 0,
+                        toko: parseFloat(row.Toko) || 0,
+                        timestamp: new Date().toISOString()
+                    });
+                });
+                alert("✅ Import Selesai!");
+                e.target.value = '';
+            }
+        };
+        reader.readAsBinaryString(file);
+    });
+
+    // 3. Filter & Render
     window.filterData = (kat, btn) => {
         currentFilter = kat;
         document.querySelectorAll('.btn-kat').forEach(b => b.classList.remove('active'));
@@ -323,125 +281,68 @@
         renderTabel();
     };
 
-    // 3. Edit Data Langsung (Inline)
     window.updateItem = (id, field, val) => {
-        const itemRef = ref(db, 'stok_opname/' + id);
-        const updateData = {};
-        updateData[field] = parseFloat(val) || 0;
-        update(itemRef, updateData);
+        update(ref(db, 'stok_opname/' + id), { [field]: parseFloat(val) || 0 });
     };
 
-    // 4. Ambil Data Realtime
     onValue(dbRef, (snapshot) => {
         allData = snapshot.val() || {};
         renderTabel();
     });
 
-    function renderTabel() {
+    window.renderTabel = () => {
         const container = document.getElementById('containerHasil');
+        const searchTerm = document.getElementById('searchItem').value.toLowerCase();
         container.innerHTML = "";
 
-        let tableHtml = `
-            <div class="card overflow-hidden">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                            <tr class="text-center small text-uppercase text-secondary">
-                                <th class="text-start ps-3 py-3">Item Info</th>
-                                <th>Lpptk</th>
-                                <th>Gudang</th>
-                                <th>Toko</th>
-                                <th>Slsh</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+        let tableHtml = `<div class="card overflow-hidden"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead class="table-light"><tr class="text-center small text-uppercase text-secondary"><th class="text-start ps-3 py-3">Item Info</th><th>Lpptk</th><th>Gudang</th><th>Toko</th><th>Slsh</th><th>Aksi</th></tr></thead><tbody>`;
 
         let hasData = false;
         Object.keys(allData).forEach(id => {
             const item = allData[id];
+            
+            // Logika Filter Kategori
             if (currentFilter !== 'SEMUA' && item.kategori !== currentFilter) return;
-            hasData = true;
+            
+            // Logika Filter Pencarian (BARU)
+            if (searchTerm && !item.nama.toLowerCase().includes(searchTerm) && !item.plu.toString().includes(searchTerm)) return;
 
+            hasData = true;
             const totalFisik = (item.gudang || 0) + (item.toko || 0);
             const selisih = totalFisik - (item.lpptk || 0);
-            
-            let sClass = "zero";
-            if(selisih < 0) sClass = "minus";
-            else if(selisih > 0) sClass = "plus";
+            const sClass = selisih < 0 ? "minus" : (selisih > 0 ? "plus" : "zero");
 
             tableHtml += `
                 <tr class="text-center">
-                    <td class="text-start ps-3">
-                        <div class="fw-bold text-dark small">${item.plu}</div>
-                        <div class="text-secondary" style="font-size: 0.8rem">${item.nama}</div>
-                    </td>
-                    <td>
-                        <input type="number" class="editable-input" value="${item.lpptk}" 
-                        onchange="updateItem('${id}', 'lpptk', this.value)">
-                    </td>
-                    <td>
-                        <input type="number" class="editable-input text-primary" value="${item.gudang}" 
-                        onchange="updateItem('${id}', 'gudang', this.value)">
-                    </td>
-                    <td>
-                        <input type="number" class="editable-input text-primary" value="${item.toko}" 
-                        onchange="updateItem('${id}', 'toko', this.value)">
-                    </td>
+                    <td class="text-start ps-3"><div class="fw-bold text-dark small">${item.plu}</div><div class="text-secondary" style="font-size: 0.8rem">${item.nama}</div></td>
+                    <td><input type="number" class="editable-input" value="${item.lpptk}" onchange="updateItem('${id}', 'lpptk', this.value)"></td>
+                    <td><input type="number" class="editable-input text-primary" value="${item.gudang}" onchange="updateItem('${id}', 'gudang', this.value)"></td>
+                    <td><input type="number" class="editable-input text-primary" value="${item.toko}" onchange="updateItem('${id}', 'toko', this.value)"></td>
                     <td><span class="selisih-box ${sClass}">${selisih}</span></td>
-                    <td>
-                        <button class="btn btn-link text-danger p-0 opacity-50 hover-opacity-100" onclick="hapusSatu('${id}')">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </td>
+                    <td><button class="btn btn-link text-danger p-0" onclick="hapusSatu('${id}')"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>`;
         });
 
         tableHtml += `</tbody></table></div></div>`;
-        
-        if (!hasData) {
-            container.innerHTML = `
-                <div class="text-center p-5 text-muted card bg-white">
-                    <i class="fas fa-folder-open fa-2x mb-3 text-light-gray"></i><br>
-                    Belum ada data di kategori ini
-                </div>`;
-        } else {
-            container.innerHTML = tableHtml;
-        }
-    }
-
-    // 5. Fitur Download & Hapus
-    window.downloadExcel = () => {
-        if(Object.keys(allData).length === 0) return alert("Belum ada data untuk di-download.");
-        
-        const dataExcel = Object.keys(allData).map(id => {
-            const item = allData[id];
-            const total = item.gudang + item.toko;
-            return {
-                Kategori: item.kategori,
-                PLU: item.plu,
-                Nama_Barang: item.nama,
-                Stok_Komputer: item.lpptk,
-                Fisik_Gudang: item.gudang,
-                Fisik_Toko: item.toko,
-                Total_Fisik: total,
-                Selisih: total - item.lpptk,
-                Waktu_Input: new Date(item.timestamp).toLocaleString()
-            };
-        });
-
-        const worksheet = XLSX.utils.json_to_sheet(dataExcel);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Stok Opname");
-        XLSX.writeFile(workbook, `SO_Harian_Udin_${new Date().toISOString().slice(0,10)}.xlsx`);
+        container.innerHTML = hasData ? tableHtml : `<div class="text-center p-5 text-muted card">Data tidak ditemukan</div>`;
     };
 
-    window.hapusSatu = (id) => { if(confirm("Hapus item ini?")) remove(ref(db, 'stok_opname/' + id)); };
-    window.resetSemua = () => { if(confirm("⚠️ PERINGATAN: Menghapus SELURUH data database?")) remove(dbRef); };
+    window.downloadExcel = () => {
+        const dataExcel = Object.keys(allData).map(id => {
+            const i = allData[id]; const t = i.gudang + i.toko;
+            return { Kategori: i.kategori, PLU: i.plu, Nama: i.nama, LPPTK: i.lpptk, Gudang: i.gudang, Toko: i.toko, Total: t, Selisih: t - i.lpptk };
+        });
+        const ws = XLSX.utils.json_to_sheet(dataExcel);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Stok");
+        XLSX.writeFile(wb, `SO_Udin_${new Date().toISOString().slice(0,10)}.xlsx`);
+    };
+
+    window.hapusSatu = (id) => { if(confirm("mau hapus?")) remove(ref(db, 'stok_opname/' + id)); };
+    window.resetSemua = () => { if(confirm("Yakin reset semua data?")) remove(dbRef); };
 
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-                               </html>
-                                
+</html>
